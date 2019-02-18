@@ -30,6 +30,13 @@ func (suite *LocalTestSuite) TestLocalFilesExists() {
 	suite.False(suite.drive.Exists("/sub2"))
 }
 
+func (suite *LocalTestSuite) TestInitModes() {
+	_, err := wfs.NewLocalDrive("./sandbox", nil)
+	suite.Nil(err)
+	_, err = wfs.NewLocalDrive("./sandbox", &wfs.DriveConfig{})
+	suite.Nil(err)
+}
+
 func (suite *LocalTestSuite) TestLocalFilesInfo() {
 	info1, err := suite.drive.Info("/sub")
 	suite.Nil(err)
@@ -240,6 +247,19 @@ func (suite *LocalTestSuite) TestLocalFileSecurity() {
 	data, err := suite.drive.List("../")
 	suite.Error(err)
 	suite.Nil(data)
+}
+
+func (suite *LocalTestSuite) TestFileNames() {
+	_, er := suite.drive.Write("/.test", []byte("1"))
+	suite.Nil(er)
+	_, er = suite.drive.Write("/test", []byte("2"))
+	suite.Nil(er)
+	_, err := suite.drive.List("/", nil)
+	suite.Nil(err)
+	er = suite.drive.Remove("/.test")
+	suite.Nil(er)
+	er = suite.drive.Remove("/test")
+	suite.Nil(er)
 }
 
 func (suite *LocalTestSuite) TestLocalFileMove() {

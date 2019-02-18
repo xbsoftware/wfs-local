@@ -50,7 +50,12 @@ func getType(info os.FileInfo) string {
 		return "folder"
 	}
 
-	ftype, ok := types[filepath.Ext(info.Name())[1:]]
+	ext := filepath.Ext(info.Name())
+	if ext == "" {
+		return "file"
+	}
+
+	ftype, ok := types[ext[1:]]
 	if !ok {
 		return "file"
 	}

@@ -24,7 +24,7 @@ func NewLocalDrive(root string, config *DriveConfig) (*LocalDrive, error) {
 		policy: &ForceRootPolicy{absroot},
 	}
 
-	if config == nil {
+	if config != nil {
 		drive.verbose = config.Verbose
 		drive.list = config.List
 		drive.operation = config.Operation
@@ -73,6 +73,9 @@ func (drive LocalDrive) List(path string, config ...*ListConfig) ([]FsObject, er
 	list := drive.list
 	if len(config) > 0 {
 		list = config[0]
+	}
+	if list == nil {
+		list = drive.list
 	}
 
 	if drive.verbose {
