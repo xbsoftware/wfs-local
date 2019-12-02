@@ -9,13 +9,18 @@ var types map[string]string
 
 func init() {
 	types = map[string]string{
-		"docx": "doc",
-
-		"xls":  "excel",
-		"xslx": "excel",
-
-		"txt": "text",
-		"md":  "text",
+		"docx": "document",
+		"doc": "document",
+		"odt": "document",
+		"xls":  "document",
+		"xslx": "document",
+		"txt": "document",
+		"md":  "document",
+		"pdf": "document",
+		"djvu": "document",
+		"djv": "document",
+		"pptx": "document",
+		"ppt": "document",
 
 		"html": "code",
 		"htm":  "code",
@@ -29,13 +34,19 @@ func init() {
 		"mp4": "video",
 		"avi": "video",
 		"mkv": "video",
+		"ogv": "video",
 
 		"png": "image",
 		"jpg": "image",
+		"jpeg": "image",
 		"gif": "image",
+		"tiff" : "image",
+		"tif" : "image",
+		"svg" : "image",
 
 		"mp3": "audio",
 		"ogg": "audio",
+		"flac": "audio",
 
 		"zip": "archive",
 		"rar": "archive",
