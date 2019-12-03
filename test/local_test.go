@@ -46,7 +46,7 @@ func (suite *LocalTestSuite) TestLocalFilesInfo() {
 	info2, err := suite.drive.Info("a.txt")
 	suite.Nil(err)
 	suite.Equal("a.txt", info2.Name)
-	suite.Equal("text", info2.Type)
+	suite.Equal("document", info2.Type)
 }
 
 func (suite *LocalTestSuite) TestLocalFilesRemove() {
