@@ -40,13 +40,14 @@ func init() {
 		"jpg": "image",
 		"jpeg": "image",
 		"gif": "image",
-		"tiff" : "image",
-		"tif" : "image",
-		"svg" : "image",
+		"tiff": "image",
+		"tif": "image",
+		"svg": "image",
 
 		"mp3": "audio",
 		"ogg": "audio",
 		"flac": "audio",
+		"wav": "audio",
 
 		"zip": "archive",
 		"rar": "archive",
