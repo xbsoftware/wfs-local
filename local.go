@@ -376,7 +376,7 @@ func (drive LocalDrive) checkName(path string, mode string) (string, error) {
             path = path + ".new"
         } else {
             index := strings.LastIndex(path, ".")
-            path = path[:index] + "new." + path[index:]
+            path = path[:index] + ".new" + path[index:]
         }
 
         _, err = os.Stat(path)
