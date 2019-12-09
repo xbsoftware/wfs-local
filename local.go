@@ -213,10 +213,11 @@ func (drive LocalDrive) Copy(source string, target string) (string, error) {
 	if drive.operation.PreventNameCollision {
 		var err error
 
+		var mode string
 		if st {
-			mode := "folder"
+			mode = "folder"
 		} else {
-			mode := "file"
+			mode = "file"
 		}
 
 		target, err = drive.checkName(target, mode)
@@ -265,10 +266,11 @@ func (drive LocalDrive) Move(source string, target string) (string, error) {
 	if drive.operation.PreventNameCollision {
 		var err error
 
+		var mode string
 		if st {
-			mode := "folder"
+			mode = "folder"
 		} else {
-			mode := "file"
+			mode = "file"
 		}
 
 		target, err = drive.checkName(target, mode)
