@@ -127,7 +127,7 @@ func (drive LocalDrive) Write(path string, data []byte) (string, error) {
 
 	if drive.operation.PreventNameCollision {
 		var err error
-		path, err = drive.checkName(path)
+		path, err = drive.checkName(path, "file")
 		if err != nil {
 			return "", err
 		}
@@ -174,7 +174,7 @@ func (drive LocalDrive) Mkdir(path string) (string, error) {
 
 	if drive.operation.PreventNameCollision {
 		var err error
-		path, err = drive.checkName(path)
+		path, err = drive.checkName(path, "folder")
 		if err != nil {
 			return "", err
 		}
@@ -212,7 +212,14 @@ func (drive LocalDrive) Copy(source string, target string) (string, error) {
 
 	if drive.operation.PreventNameCollision {
 		var err error
-		target, err = drive.checkName(target)
+
+		if st {
+			mode := "folder"
+		} else {
+			mode := "file"
+		}
+
+		target, err = drive.checkName(target, mode)
 		if err != nil {
 			return "", err
 		}
@@ -257,7 +264,14 @@ func (drive LocalDrive) Move(source string, target string) (string, error) {
 
 	if drive.operation.PreventNameCollision {
 		var err error
-		target, err = drive.checkName(target)
+
+		if st {
+			mode := "folder"
+		} else {
+			mode := "file"
+		}
+
+		target, err = drive.checkName(target, mode)
 		if err != nil {
 			return "", err
 		}
@@ -351,16 +365,22 @@ func (drive LocalDrive) listFolder(path string, prefix string, config *ListConfi
 
 	return res, nil
 }
+func (drive LocalDrive) checkName(path string, mode string) (string, error) {
+    _, err := os.Stat(path)
 
-func (drive LocalDrive) checkName(path string) (string, error) {
-	_, err := os.Stat(path)
+    for !os.IsNotExist(err) {
+        
+        if mode == "folder" {
+            path = path + ".new"
+        } else {
+            index := strings.LastIndex(path, ".")
+            path = path[:index] + "new." + path[index:]
+        }
 
-	for !os.IsNotExist(err) {
-		path = path + ".new"
-		_, err = os.Stat(path)
-	}
+        _, err = os.Stat(path)
+    }
 
-	return path, nil
+    return path, nil
 }
 
 // WithOperationConfig makes a copy of drive with new operation config
