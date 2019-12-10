@@ -1,5 +1,7 @@
 package wfs
 
+import "io"
+
 // FsObject stores info about single file
 type FsObject struct {
 	Name  string     `json:"value"`
@@ -39,12 +41,12 @@ type MatcherFunc func(string) bool
 type Drive interface {
 	Exists(path string) bool
 	Info(path string) (*FsObject, error)
-	Read(path string) ([]byte, error)
+	Read(path string) (io.Reader, error)
 	List(folder string, config ...*ListConfig) ([]FsObject, error)
 
 	Remove(path string) error
 	Mkdir(path string) (string, error)
-	Write(path string, source []byte) (string, error)
+	Write(path string, source io.Reader) (string, error)
 	Copy(source string, target string) (string, error)
 	Move(source string, target string) (string, error)
 

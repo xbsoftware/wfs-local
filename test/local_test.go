@@ -1,6 +1,7 @@
 package test
 
 import (
+	"io/ioutil"
 	"log"
 	"regexp"
 	"strings"
@@ -50,7 +51,7 @@ func (suite *LocalTestSuite) TestLocalFilesInfo() {
 }
 
 func (suite *LocalTestSuite) TestLocalFilesRemove() {
-	path, err := suite.drive.Write("/sub/test.doc", []byte("some"))
+	path, err := suite.drive.Write("/sub/test.doc", strings.NewReader("some"))
 	suite.Nil(err)
 	suite.Equal("/sub/test.doc", path)
 	suite.True(suite.drive.Exists("/sub/test.doc"))
@@ -61,12 +62,14 @@ func (suite *LocalTestSuite) TestLocalFilesRemove() {
 }
 
 func (suite *LocalTestSuite) writeAndCheck(target, text, check string, clean bool, drive wfs.Drive) {
-	path, err := drive.Write(target, []byte(text))
+	path, err := drive.Write(target, strings.NewReader(text))
 	suite.Nil(err)
 	suite.Equal(check, path)
 	suite.True(drive.Exists(check))
 
-	data, err := drive.Read(check)
+	read, err := drive.Read(check)
+	suite.Nil(err)
+	data, err := ioutil.ReadAll(read)
 	suite.Nil(err)
 	suite.Equal(text, string(data))
 
@@ -83,7 +86,9 @@ func (suite *LocalTestSuite) TestLocalFilesWrite() {
 }
 
 func (suite *LocalTestSuite) TestLocalFilesRead() {
-	info1, err := suite.drive.Read("/sub/deep/deep.doc")
+	read1, err := suite.drive.Read("/sub/deep/deep.doc")
+	suite.Nil(err)
+	info1, err := ioutil.ReadAll(read1)
 	suite.Nil(err)
 	suite.Equal("test", strings.TrimSpace(string(info1)))
 }
@@ -250,9 +255,9 @@ func (suite *LocalTestSuite) TestLocalFileSecurity() {
 }
 
 func (suite *LocalTestSuite) TestFileNames() {
-	_, er := suite.drive.Write("/.test", []byte("1"))
+	_, er := suite.drive.Write("/.test", strings.NewReader("1"))
 	suite.Nil(er)
-	_, er = suite.drive.Write("/test", []byte("2"))
+	_, er = suite.drive.Write("/test", strings.NewReader("2"))
 	suite.Nil(er)
 	_, err := suite.drive.List("/", nil)
 	suite.Nil(err)

@@ -2,6 +2,7 @@ package wfs
 
 import (
 	"errors"
+	"io"
 	"io/ioutil"
 	"log"
 	"os"
@@ -101,7 +102,7 @@ func (drive LocalDrive) Remove(path string) error {
 }
 
 // Read returns content of a file
-func (drive LocalDrive) Read(path string) ([]byte, error) {
+func (drive LocalDrive) Read(path string) (io.Reader, error) {
 	if drive.verbose {
 		log.Printf("Read %s", path)
 	}
@@ -111,11 +112,16 @@ func (drive LocalDrive) Read(path string) ([]byte, error) {
 		return nil, errors.New("Access Denied")
 	}
 
-	return ioutil.ReadFile(path)
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, errors.New("Can't open file for reading")
+	}
+	return file, nil
+
 }
 
 // Write saves content to a file
-func (drive LocalDrive) Write(path string, data []byte) (string, error) {
+func (drive LocalDrive) Write(path string, data io.Reader) (string, error) {
 	if drive.verbose {
 		log.Printf("Write %s", path)
 	}
@@ -133,7 +139,18 @@ func (drive LocalDrive) Write(path string, data []byte) (string, error) {
 		}
 	}
 
-	return drive.pathToID(path), ioutil.WriteFile(path, data, 0600)
+	file, err := os.Create(path)
+	if err != nil {
+		return "", errors.New("Can't open file for writing")
+	}
+	defer file.Close()
+
+	_, err = io.Copy(file, data)
+	if err != nil {
+		return "", errors.New("Can't write data")
+	}
+
+	return drive.pathToID(path), nil
 }
 
 func (drive LocalDrive) Exists(id string) bool {
