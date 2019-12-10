@@ -127,7 +127,7 @@ func (drive LocalDrive) Write(path string, data []byte) (string, error) {
 
 	if drive.operation.PreventNameCollision {
 		var err error
-		path, err = drive.checkName(path, "file")
+		path, err = drive.checkName(path, false)
 		if err != nil {
 			return "", err
 		}
@@ -174,7 +174,7 @@ func (drive LocalDrive) Mkdir(path string) (string, error) {
 
 	if drive.operation.PreventNameCollision {
 		var err error
-		path, err = drive.checkName(path, "folder")
+		path, err = drive.checkName(path, true)
 		if err != nil {
 			return "", err
 		}
@@ -213,14 +213,7 @@ func (drive LocalDrive) Copy(source string, target string) (string, error) {
 	if drive.operation.PreventNameCollision {
 		var err error
 
-		var mode string
-		if st {
-			mode = "folder"
-		} else {
-			mode = "file"
-		}
-
-		target, err = drive.checkName(target, mode)
+		target, err = drive.checkName(target, st)
 		if err != nil {
 			return "", err
 		}
@@ -266,14 +259,7 @@ func (drive LocalDrive) Move(source string, target string) (string, error) {
 	if drive.operation.PreventNameCollision {
 		var err error
 
-		var mode string
-		if st {
-			mode = "folder"
-		} else {
-			mode = "file"
-		}
-
-		target, err = drive.checkName(target, mode)
+		target, err = drive.checkName(target, st)
 		if err != nil {
 			return "", err
 		}
@@ -367,22 +353,23 @@ func (drive LocalDrive) listFolder(path string, prefix string, config *ListConfi
 
 	return res, nil
 }
-func (drive LocalDrive) checkName(path string, mode string) (string, error) {
-    _, err := os.Stat(path)
+func (drive LocalDrive) checkName(path string, isFolder bool) (string, error) {
+	_, err := os.Stat(path)
 
-    for !os.IsNotExist(err) {
-        
-        if mode == "folder" {
-            path = path + ".new"
-        } else {
-            index := strings.LastIndex(path, ".")
-            path = path[:index] + ".new" + path[index:]
-        }
+	for !os.IsNotExist(err) {
+		ext := filepath.Ext(path)
 
-        _, err = os.Stat(path)
-    }
+		if isFolder || ext == "" {
+			path = path + ".new"
+		} else {
+			index := strings.LastIndex(path, ext)
+			path = path[:index] + ".new" + path[index:]
+		}
 
-    return path, nil
+		_, err = os.Stat(path)
+	}
+
+	return path, nil
 }
 
 // WithOperationConfig makes a copy of drive with new operation config
