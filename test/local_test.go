@@ -82,7 +82,7 @@ func (suite *LocalTestSuite) TestLocalFilesWrite() {
 	suite.writeAndCheck("/sub/deep/copy.doc", "some", "/sub/deep/copy.doc", false, suite.drive)
 	suite.writeAndCheck("/sub/deep/copy.doc", "other", "/sub/deep/copy.doc", true, suite.drive)
 
-	suite.writeAndCheck("/sub/deep/deep.doc", "none", "/sub/deep/deep.doc.new", true, suite.collisionDrive)
+	suite.writeAndCheck("/sub/deep/deep.doc", "none", "/sub/deep/deep.new.doc", true, suite.collisionDrive)
 }
 
 func (suite *LocalTestSuite) TestLocalFilesRead() {
@@ -156,7 +156,7 @@ func (suite *LocalTestSuite) TestLocalFileCopy() {
 	suite.copyAndTest("/sub/deep/deep.doc", "/sub/", "/sub/deep.doc", suite.drive)
 
 	//copy file and rename
-	suite.copyAndTest("c.jpg", "/sub", "/sub/c.jpg.new", suite.collisionDrive)
+	suite.copyAndTest("c.jpg", "/sub", "/sub/c.new.jpg", suite.collisionDrive)
 
 	//copy folder
 	suite.copyAndTestFolder("/sub", "/sub2", "/sub2", suite.drive)
@@ -281,11 +281,11 @@ func (suite *LocalTestSuite) TestLocalFileMove() {
 	// move and rename file
 	data, err = suite.collisionDrive.Move("/c.jpg", "/sub/")
 	suite.Nil(err)
-	suite.Equal("/sub/c.jpg.new", data)
-	suite.True(suite.collisionDrive.Exists("/sub/c.jpg.new"))
+	suite.Equal("/sub/c.new.jpg", data)
+	suite.True(suite.collisionDrive.Exists("/sub/c.new.jpg"))
 	suite.False(suite.collisionDrive.Exists("/c.jpg"))
 
-	suite.collisionDrive.Move("/sub/c.jpg.new", "/c.jpg")
+	suite.collisionDrive.Move("/sub/c.new.jpg", "/c.jpg")
 
 	// move folder
 	data, err = suite.drive.Copy("/sub", "/sub3")

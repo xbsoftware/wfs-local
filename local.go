@@ -133,7 +133,7 @@ func (drive LocalDrive) Write(path string, data io.Reader) (string, error) {
 
 	if drive.operation.PreventNameCollision {
 		var err error
-		path, err = drive.checkName(path)
+		path, err = drive.checkName(path, false)
 		if err != nil {
 			return "", err
 		}
@@ -191,7 +191,7 @@ func (drive LocalDrive) Mkdir(path string) (string, error) {
 
 	if drive.operation.PreventNameCollision {
 		var err error
-		path, err = drive.checkName(path)
+		path, err = drive.checkName(path, true)
 		if err != nil {
 			return "", err
 		}
@@ -229,7 +229,8 @@ func (drive LocalDrive) Copy(source string, target string) (string, error) {
 
 	if drive.operation.PreventNameCollision {
 		var err error
-		target, err = drive.checkName(target)
+
+		target, err = drive.checkName(target, st)
 		if err != nil {
 			return "", err
 		}
@@ -274,7 +275,8 @@ func (drive LocalDrive) Move(source string, target string) (string, error) {
 
 	if drive.operation.PreventNameCollision {
 		var err error
-		target, err = drive.checkName(target)
+
+		target, err = drive.checkName(target, st)
 		if err != nil {
 			return "", err
 		}
@@ -368,12 +370,19 @@ func (drive LocalDrive) listFolder(path string, prefix string, config *ListConfi
 
 	return res, nil
 }
-
-func (drive LocalDrive) checkName(path string) (string, error) {
+func (drive LocalDrive) checkName(path string, isFolder bool) (string, error) {
 	_, err := os.Stat(path)
 
 	for !os.IsNotExist(err) {
-		path = path + ".new"
+		ext := filepath.Ext(path)
+
+		if isFolder || ext == "" {
+			path = path + ".new"
+		} else {
+			index := len(path) - len(ext)
+			path = path[:index] + ".new" + path[index:]
+		}
+
 		_, err = os.Stat(path)
 	}
 
