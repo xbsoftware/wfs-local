@@ -362,7 +362,7 @@ func (drive LocalDrive) checkName(path string, isFolder bool) (string, error) {
 		if isFolder || ext == "" {
 			path = path + ".new"
 		} else {
-			index := strings.LastIndex(path, ext)
+			index := strings.Index(path, ext)
 			path = path[:index] + ".new" + path[index:]
 		}
 
