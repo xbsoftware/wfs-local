@@ -102,7 +102,7 @@ func (drive LocalDrive) Remove(path string) error {
 }
 
 // Read returns content of a file
-func (drive LocalDrive) Read(path string) (io.Reader, error) {
+func (drive LocalDrive) Read(path string) (io.ReadSeeker, error) {
 	if drive.verbose {
 		log.Printf("Read %s", path)
 	}

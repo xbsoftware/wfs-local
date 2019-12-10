@@ -41,7 +41,7 @@ type MatcherFunc func(string) bool
 type Drive interface {
 	Exists(path string) bool
 	Info(path string) (*FsObject, error)
-	Read(path string) (io.Reader, error)
+	Read(path string) (io.ReadSeeker, error)
 	List(folder string, config ...*ListConfig) ([]FsObject, error)
 
 	Remove(path string) error
