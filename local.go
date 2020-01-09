@@ -295,11 +295,11 @@ func (drive LocalDrive) isFolder(path string) (bool, bool) {
 }
 
 func (drive LocalDrive) idToPath(id string) string {
-	return filepath.Clean(filepath.Join(drive.root, id))
+	return filepath.Clean(filepath.Join(drive.root, filepath.FromSlash(id)))
 }
 
 func (drive LocalDrive) pathToID(path string) string {
-	return strings.Replace(path, drive.root, "", 1)
+	return filepath.ToSlash(strings.Replace(path, drive.root, "", 1))
 }
 
 func (drive LocalDrive) listFolder(path string, prefix string, config *ListConfig, res []FsObject) ([]FsObject, error) {
