@@ -317,7 +317,7 @@ func (drive LocalDrive) listFolder(path string, prefix string, config *ListConfi
 	for _, file := range list {
 		skipFile := false
 		if config.Exclude != nil && config.Exclude(file.Name()) {
-			skipFile = true
+			continue
 		}
 		if config.Include != nil && !config.Include(file.Name()) {
 			skipFile = true
