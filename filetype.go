@@ -3,6 +3,7 @@ package wfs
 import (
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 var types map[string]string
@@ -70,7 +71,7 @@ func getType(info os.FileInfo) string {
 		return "file"
 	}
 
-	ftype, ok := types[ext[1:]]
+	ftype, ok := types[strings.ToLower(ext[1:])]
 	if !ok {
 		return "file"
 	}
