@@ -1,16 +1,30 @@
-package wfs
+package local
 
 import (
 	"errors"
 	"io"
 	"io/ioutil"
 	"os"
+	"path/filepath"
+	"strings"
 )
+
+func glob(dir string, search string) ([]string, error) {
+  files := make([]string, 0)
+  err := filepath.Walk(dir, func(path string, f os.FileInfo, err error) error {
+    if path != dir && strings.Contains(filepath.Base(path), search){
+      files = append(files, path)
+    }
+    return nil
+  })
+
+  return files, err
+}
 
 // Based on https://gist.github.com/jaybill/2876519
 
-// CopyFile copies file source to destination dest.
-func CopyFile(source string, dest string) (err error) {
+// copyFile copies file source to destination dest.
+func copyFile(source string, dest string) (err error) {
 	sf, err := os.Open(source)
 	if err != nil {
 		return err
@@ -34,9 +48,9 @@ func CopyFile(source string, dest string) (err error) {
 	return
 }
 
-// CopyDir recursively copies a directory tree, attempting to preserve permissions.
+// copyDir recursively copies a directory tree, attempting to preserve permissions.
 // Source directory must exist, destination directory must *not* exist.
-func CopyDir(source string, dest string) (err error) {
+func copyDir(source string, dest string) (err error) {
 
 	// get properties of source dir
 	fi, err := os.Stat(source)
@@ -69,13 +83,13 @@ func CopyDir(source string, dest string) (err error) {
 		sfp := source + "/" + entry.Name()
 		dfp := dest + "/" + entry.Name()
 		if entry.IsDir() {
-			err = CopyDir(sfp, dfp)
+			err = copyDir(sfp, dfp)
 			if err != nil {
 				return err
 			}
 		} else {
 			// perform copy
-			err = CopyFile(sfp, dfp)
+			err = copyFile(sfp, dfp)
 			if err != nil {
 				return err
 			}

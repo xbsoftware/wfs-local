@@ -1,9 +1,8 @@
 Web File System - Local files driver
 =========
 
-[![Build Status](https://drone-github.webix.io/api/badges/xbsoftware/wfs-local/status.svg)](https://drone-github.webix.io/xbsoftware/wfs-local)
-
-File system abstraction with access management.
+File system abstraction with access management
+This is the Local File System adapter for the [core interface](https://github.com/xbsoftware/wfs)
 
 API provides common file operations for some folder on local drive. Any operations outside of the folder will be blocked. Also, it possible to configure a custom policy for read/write operations.
 
@@ -21,80 +20,6 @@ import (
 )
 
 fs, err := wfs.NewLocalDrive("./sandbox", nil)
-```
-
-### Get data
-
-```go
-//get files in a folder
-files, err := fs.List("/subfolder");
-
-//get files in a folder and subfolders as plain list
-files, err = fs.List("/subfolder", &wfs.ListConfig{ SubFolders: true });
-
-//get files in a folder and subfolders as nested structure
-files, err = fs.List("/subfolder", &wfs.ListConfig{ SubFolders: true, Nested:true });
-
-//get folder only
-files, err = fs.List("/subfolder", &wfs.ListConfig{ SkipFiles: true });
-
-//get files that match a mask
-files, err = fs.List("/subfolder", &wfs.ListConfig{
-    Include: func(file string) bool { return strings.HasSufix(file, ".txt") },
-});
-
-//ignore some files
-files, err = fs.List("/subfolder", &wfs.ListConfig{
-    Exclude: func(file string) bool { return file == ".git" },
-});
-
-//get info about a single file
-info, err = fs.Info("some.txt");
-
-//check if file exists
-check := fs.Exists("some.txt");
-```
-
-### Modify files
-
-```go
-//make folder
-fs.Mkdir("sub2");
-
-//remove
-fs.Remove("some.txt");
-
-//copy
-fs.Copy("some.txt", "/sub/");
-
-//move
-fs.Move("some.txt", "some-data.txt");
-
-//read
-bytes, err := fs.Read("some.txt");
-
-//write
-fs.Write("some.txt", bytes)
-```
-
-### Configuration
-
-```go
-// Access policies
-// ForceRoot policy is added automatically
-fs, err := wfs.NewLocalDrive("./sandbox", &wfs.DriveConfig{
-    Policy: &ReadOnlyPolicy{},
-})
-
-// Logging
-fs, err := wfs.NewLocalDrive("./sandbox", &wfs.DriveConfig{
-    Verbose:true
-})
-
-// Exec operation with different config
-path, err := fs.WithOperationConfig(&OperationConfig{
-    PreventNameCollision:true,
-}).Mkdir("/some")
 ```
 
 ### License 
