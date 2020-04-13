@@ -17,8 +17,9 @@ type LocalDrive struct {
 
 type localFile struct {
 	path string
-	id string
+	id   string
 }
+
 func (l localFile) GetPath() string {
 	return l.path
 }
@@ -33,29 +34,29 @@ func (l localFile) IsFolder() bool {
 	return false
 }
 func (l localFile) Contains(target wfs.FileID) bool {
-	if strings.HasPrefix(target.GetPath(), l.GetPath()+string(filepath.Separator)){
+	if strings.HasPrefix(target.GetPath(), l.GetPath()+string(filepath.Separator)) {
 		return true
 	}
 
 	return false
 }
 
-
 type localFileInfo struct {
 	os.FileInfo
 	f wfs.FileID
 }
+
 func (i localFileInfo) File() wfs.FileID {
 	return i.f
 }
 
-func NewLocalDrive(path string, config *wfs.DriveConfig) (wfs.Drive, error){
+func NewLocalDrive(path string, config *wfs.DriveConfig) (wfs.Drive, error) {
 	root, err := filepath.Abs(path)
 	if err != nil {
 		return nil, errors.New("Invalid path: " + root)
 	}
 
-	d := LocalDrive{root:root}
+	d := LocalDrive{root: root}
 
 	return wfs.NewDrive(&d, config), nil
 }
@@ -100,7 +101,7 @@ func (l *LocalDrive) Write(f wfs.FileID, data io.Reader) error {
 
 	return err
 }
-func (l *LocalDrive) Make(f wfs.FileID, name string, isFolder bool) (wfs.FileID,error) {
+func (l *LocalDrive) Make(f wfs.FileID, name string, isFolder bool) (wfs.FileID, error) {
 	full := filepath.Join(f.GetPath(), name)
 	out := l.newLocalFile(full)
 	if isFolder {
@@ -116,8 +117,9 @@ func (l *LocalDrive) Make(f wfs.FileID, name string, isFolder bool) (wfs.FileID,
 
 func (l *LocalDrive) Copy(source, target wfs.FileID, name string, isFolder bool) (wfs.FileID, error) {
 	full := filepath.Join(target.GetPath(), name)
+
 	if isFolder {
-		return nil, copyDir(source.GetPath(), full)
+		return l.newLocalFile(full), copyDir(source.GetPath(), full)
 	}
 
 	//copy file
@@ -149,7 +151,7 @@ func (l *LocalDrive) List(f wfs.FileID) ([]wfs.FileInfo, error) {
 	}
 
 	info := make([]wfs.FileInfo, 0, len(files))
-	for i:= range files {
+	for i := range files {
 		info = append(info, localFileInfo{
 			files[i],
 			l.newLocalFile(filepath.Join(full, files[i].Name())),
@@ -159,19 +161,19 @@ func (l *LocalDrive) List(f wfs.FileID) ([]wfs.FileInfo, error) {
 	return info, nil
 }
 
-func (l *LocalDrive) Search(f wfs.FileID, search string) ([]wfs.FileInfo, error){
-	 matches, err := glob(f.GetPath(), search)
-	 if err != nil {
-		 return nil, err
-	 }
+func (l *LocalDrive) Search(f wfs.FileID, search string) ([]wfs.FileInfo, error) {
+	matches, err := glob(f.GetPath(), search)
+	if err != nil {
+		return nil, err
+	}
 
-	 out := make([]wfs.FileInfo, len(matches))
-	 for i := range matches {
-	 	info, _ := os.Stat(matches[i])
-	 	out[i] = localFileInfo{info, l.newLocalFile(matches[i])}
-	 }
+	out := make([]wfs.FileInfo, len(matches))
+	for i := range matches {
+		info, _ := os.Stat(matches[i])
+		out[i] = localFileInfo{info, l.newLocalFile(matches[i])}
+	}
 
-	 return out, nil
+	return out, nil
 }
 
 func (l *LocalDrive) Exists(f wfs.FileID, name string) bool {
