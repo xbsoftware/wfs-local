@@ -33,6 +33,7 @@ func (l localFile) IsFolder() bool {
 	}
 	return false
 }
+
 func (l localFile) Contains(source wfs.FileID) bool {
 	if strings.HasPrefix(l.GetPath(), source.GetPath()+string(filepath.Separator)) {
 		return true
@@ -117,8 +118,9 @@ func (l *LocalDrive) Make(f wfs.FileID, name string, isFolder bool) (wfs.FileID,
 
 func (l *LocalDrive) Copy(source, target wfs.FileID, name string, isFolder bool) (wfs.FileID, error) {
 	full := filepath.Join(target.GetPath(), name)
+
 	if isFolder {
-		return nil, copyDir(source.GetPath(), full)
+		return l.newLocalFile(full), copyDir(source.GetPath(), full)
 	}
 
 	//copy file
