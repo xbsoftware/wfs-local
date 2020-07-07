@@ -10,15 +10,15 @@ import (
 )
 
 func glob(dir string, search string) ([]string, error) {
-  files := make([]string, 0)
-  err := filepath.Walk(dir, func(path string, f os.FileInfo, err error) error {
-    if path != dir && strings.Contains(filepath.Base(path), search){
-      files = append(files, path)
-    }
-    return nil
-  })
+	files := make([]string, 0)
+	err := filepath.Walk(dir, func(path string, f os.FileInfo, err error) error {
+		if path != dir && strings.Contains(filepath.Base(path), search) {
+			files = append(files, path)
+		}
+		return nil
+	})
 
-  return files, err
+	return files, err
 }
 
 // Based on https://gist.github.com/jaybill/2876519
