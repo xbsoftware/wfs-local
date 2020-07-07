@@ -117,8 +117,9 @@ func (l *LocalDrive) Make(f wfs.FileID, name string, isFolder bool) (wfs.FileID,
 
 func (l *LocalDrive) Copy(source, target wfs.FileID, name string, isFolder bool) (wfs.FileID, error) {
 	full := filepath.Join(target.GetPath(), name)
+
 	if isFolder {
-		return nil, copyDir(source.GetPath(), full)
+		return l.newLocalFile(full), copyDir(source.GetPath(), full)
 	}
 
 	//copy file
