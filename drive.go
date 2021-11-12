@@ -34,7 +34,7 @@ func (l localFile) IsFolder() bool {
 	return false
 }
 func (l localFile) Contains(target wfs.FileID) bool {
-	if strings.HasPrefix(target.GetPath(), l.GetPath()+string(filepath.Separator)) {
+	if strings.HasPrefix(l.GetPath(), target.GetPath()+string(filepath.Separator)) {
 		return true
 	}
 
